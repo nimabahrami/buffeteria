@@ -1,0 +1,13 @@
+flask
+pandas
+yfinance
+sec-edgar-downloader
+pypdf
+pdfplumber
+openai
+python-dotenv
+beautifulsoup4
+lxml
+html5lib
+numpy<2
+click

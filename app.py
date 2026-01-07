@@ -65,9 +65,14 @@ def market_data():
                         data['ebitda'] = ebitda_row.iloc[0] # Most recent
                 except:
                     pass
+        
+        # Order Flow / Volume Profile
+        vp = analyzer.market_data_fetcher.get_volume_profile(ticker, period=period)
+        data['volume_profile'] = vp
                     
         return jsonify(data)
     except Exception as e:
+
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
