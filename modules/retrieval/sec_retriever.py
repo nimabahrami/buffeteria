@@ -3,8 +3,7 @@ from sec_edgar_downloader import Downloader
 from typing import List, Optional
 import glob
 
-class SECRetriever:
-    def __init__(self, download_dir: str = "data/filings", email: str = "user@example.com", company: str = "User"):
+    def __init__(self, download_dir: str = "data/filings", email: str = "admin@buffetria.com", company: str = "BuffetriaApp"):
         """
         Initialize the SEC Retriever.
         
@@ -14,21 +13,20 @@ class SECRetriever:
             company: User company/name required by SEC EDGAR API.
         """
         self.download_dir = download_dir
-        # Standard SEC User-Agent format: 'AppName/Version (Company; Email)' or just 'Company Email'
-        # The library generic Downloader takes 'company' and 'email'.
+        # SEC requires 'Sample Company Name AdminContact@sample.com'
+        # The library constructs this from company and email.
+        # We default to a generic one but allow override.
         self.downloader = Downloader(company, email, download_dir)
 
     def fetch_filings(self, ticker: str, filing_type: str = "10-K", amount: int = 1):
         """
         Fetch the latest filings for a given ticker.
-        
-        Args:
-            ticker: Stock ticker symbol (e.g., 'XOM').
-            filing_type: Type of filing ('10-K', '10-Q').
-            amount: Number of recent filings to download.
         """
         print(f"Fetching {amount} {filing_type}(s) for {ticker}...")
         try:
+            # Rate Limit Protection (SEC allows ~10/sec, but cloud shared IPs are noisy)
+            import time
+            time.sleep(0.5) 
             count = self.downloader.get(filing_type, ticker, limit=amount)
             print(f"Successfully downloaded {count} filings.")
         except Exception as e:
