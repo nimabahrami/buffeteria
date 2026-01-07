@@ -3,6 +3,7 @@ from sec_edgar_downloader import Downloader
 from typing import List, Optional
 import glob
 
+class SECRetriever:
     def __init__(self, download_dir: str = "data/filings", email: str = "admin@buffetria.com", company: str = "BuffetriaApp"):
         """
         Initialize the SEC Retriever.
