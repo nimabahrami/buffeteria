@@ -9,8 +9,8 @@ venv/
 .DS_Store
 
 # Project Data
-data/
-sec-edgar-filings/
+# data/
+# sec-edgar-filings/
 *.pdf
 
 # IDE
