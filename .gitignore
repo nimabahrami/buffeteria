@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv/
+
+# Mac
+.DS_Store
+
+# Project Data
+data/
+sec-edgar-filings/
+*.pdf
+*.txt
+*.html
+
+# IDE
+.vscode/
+.idea/
