@@ -17,12 +17,10 @@ class Analyzer:
 
     def analyze_ticker(self, ticker: str) -> Dict[str, Any]:
         """
-        Main entry point. Returns a dictionary with:
-        - summary
-        - scorecard (list of check results)
-        - ledger (json str)
-        """
-        # 1. Fetch Live Data
+        # 1. Standardize Ticker
+        ticker = ticker.upper()
+
+        # 2. Fetch Live Data
         market_data = self.market_data_fetcher.get_live_data(ticker)
         
         # 2. Fetch Documents

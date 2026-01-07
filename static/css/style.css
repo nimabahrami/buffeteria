@@ -1,9 +1,8 @@
 :root {
     --bg-dark: #0d0d0d;
     --bg-card: #151515;
-    --sidebar-bg: #101010;
     --text-main: #ffffff;
-    --text-muted: #888888;
+    --text-muted: #666;
     --accent-green: #00ff9d;
     --accent-orange: #ff9900;
     --border: #222222;
@@ -26,254 +25,216 @@ body {
 
 .app-container {
     display: flex;
+    flex-direction: column;
     height: 100%;
 }
 
-/* Sidebar */
-.sidebar {
-    width: 240px;
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--border);
+/* Header */
+.main-header {
+    height: 60px;
+    border-bottom: 1px solid var(--border);
     display: flex;
-    flex-direction: column;
-    padding: 24px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    background: var(--bg-dark);
+    z-index: 10;
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    font-weight: 700;
     font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 30px;
     color: var(--text-main);
+    letter-spacing: 0.5px;
 }
 
-.search-wrapper input {
-    width: 100%;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 10px 12px;
+/* Centered Minimal Search */
+.search-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    max-width: 400px;
+    /* Limit width */
+    margin: 0 auto;
+}
+
+#tickerInput {
+    background: transparent;
+    border: none;
     color: var(--text-main);
     font-family: var(--font-main);
-    font-size: 0.9rem;
-    margin-bottom: 24px;
+    font-size: 1rem;
+    text-align: center;
+    width: 200px;
+    padding: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    transition: width 0.3s;
+}
+
+#tickerInput:focus {
     outline: none;
-    transition: border 0.2s;
+    width: 300px;
+    /* Minimal border bottom active */
+    border-bottom: 1px solid var(--accent-green);
 }
 
-.search-wrapper input:focus {
-    border-color: var(--accent-green);
+#tickerInput::placeholder {
+    color: #444;
+    text-align: center;
 }
 
-.nav-menu {
-    list-style: none;
-    flex: 1;
-}
-
-.nav-menu li {
-    padding: 12px 16px;
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    cursor: pointer;
-    border-radius: 8px;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: background 0.2s, color 0.2s;
-}
-
-.nav-menu li:hover,
-.nav-menu li.active {
+/* Custom Dropdown */
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
     background: #1a1a1a;
-    color: var(--accent-green);
-}
-
-.sidebar-footer {
-    border-top: 1px solid var(--border);
-    padding-top: 20px;
-}
-
-.setting-item {
-    color: var(--text-muted);
-    padding: 10px 0;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-/* Main Content */
-.main-content {
-    flex: 1;
-    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 8px;
+    max-height: 200px;
+    /* Scroll after ~5 items */
     overflow-y: auto;
-    background: radial-gradient(circle at top right, #1a1a1a 0%, #0d0d0d 40%);
+    display: none;
+    z-index: 2000;
+    /* Increased z-index */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* Header */
-.stock-header {
+.suggestion-item {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-bottom: 1px solid #222;
+    color: #ccc;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
+    transition: background 0.2s;
 }
 
-.breadcrumbs {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 8px;
-}
-
-h1 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.stock-badges {
-    display: flex;
-    gap: 8px;
-}
-
-.badge {
-    background: #222;
-    color: #ccc;
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    border-radius: 4px;
-}
-
-.header-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.btn-primary {
-    background: var(--accent-orange);
-    color: #000;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-secondary {
+.suggestion-item:hover {
     background: #222;
     color: #fff;
-    border: 1px solid #333;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
 }
 
-/* Price Hero */
-.price-hero {
-    margin-bottom: 30px;
+.suggestion-item:last-child {
+    border-bottom: none;
 }
 
-.price-large {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--text-main);
-}
+/* ... existing code ... */
 
-.price-change {
-    font-size: 1rem;
-    color: var(--accent-green);
-    margin-top: 4px;
-}
-
-/* Tabs */
-.tabs {
+/* Dashboard Stack */
+.dashboard-stack {
     display: flex;
-    gap: 32px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-}
-
-.tab {
-    padding-bottom: 12px;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-weight: 500;
-    position: relative;
-}
-
-.tab.active {
-    color: var(--accent-orange);
-}
-
-.tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--accent-orange);
-}
-
-/* Grid */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: auto auto;
+    flex-direction: column;
     gap: 24px;
+    max-width: 1600px;
+    /* Increased from 1200px to fill screen */
+    width: 95%;
+    /* Ensure it takes up space */
+    margin: 0 auto;
+    padding-bottom: 100px;
+    /* Ensure bottom isn't cut off */
 }
 
 .card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
+    border-radius: 8px;
+    /* Slightly less rounded for sleek look */
+    padding: 20px;
 }
 
-.chart-card {
-    grid-column: 1 / 3;
-    /* Full width for chart */
-}
-
-.card-header {
+/* Chart Controls */
+.chart-controls-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    /* Right aligned */
+    gap: 24px;
     margin-bottom: 16px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 10px;
 }
 
-.time-filters {
+.control-group {
     display: flex;
-    background: #222;
-    border-radius: 6px;
-    padding: 2px;
+    align-items: center;
+    gap: 10px;
 }
 
-.time-filter {
+.control-label {
+    font-size: 0.75rem;
+    color: #555;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 4px;
+    background: #000;
+    padding: 3px;
+    border-radius: 6px;
+}
+
+.btn-toggle {
+    background: transparent;
+    border: none;
+    color: #666;
     padding: 6px 12px;
-    font-size: 0.85rem;
+    font-family: var(--font-main);
+    font-size: 0.8rem;
+    font-weight: 500;
     cursor: pointer;
     border-radius: 4px;
-    color: #888;
+    transition: color 0.2s, background 0.2s;
 }
 
-.time-filter.active {
-    background: #333;
+.btn-toggle:hover {
     color: #fff;
 }
 
-.volume-card h3,
-.stats-card h3 {
-    margin-bottom: 16px;
-    font-size: 1rem;
-    color: var(--text-muted);
+.btn-toggle.active {
+    background: #222;
+    color: var(--accent-green);
 }
 
-/* Gauge */
+.chart-wrapper {
+    height: 400px;
+    position: relative;
+}
+
+.volume-chart-wrapper {
+    height: 200px;
+    position: relative;
+}
+
+/* Order Flow */
+.card-header-simple h3 {
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+/* Scorecard */
 .score-summary {
     display: flex;
+    flex-direction: column;
+    /* Stack gauge and table vertical or keep horizontal? User said items on left empty? Let's stack them for full width table */
+    gap: 20px;
+}
+
+.gauge-row {
+    display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 15px;
+    margin-bottom: 10px;
 }
 
 .gauge-container {
@@ -287,10 +248,18 @@ h1 {
 .gauge-fill {
     height: 100%;
     background: var(--accent-green);
-    transition: width 1s ease;
+    transition: width 0.8s ease-out;
 }
 
-/* Table */
+.table-wrapper {
+    width: 100%;
+    max-height: 400px;
+    /* Enable Scroll */
+    overflow-y: auto;
+    border: 1px solid #222;
+    border-radius: 6px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -299,16 +268,17 @@ table {
 th,
 td {
     text-align: left;
-    padding: 10px 0;
+    padding: 12px 16px;
     border-bottom: 1px solid #222;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 th {
-    color: #555;
-    font-weight: 500;
-    font-size: 0.8rem;
-    text-transform: uppercase;
+    background: #1a1a1a;
+    color: #666;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
 }
 
 .status-check-ok {
@@ -316,9 +286,147 @@ th {
 }
 
 .status-check-red {
-    color: #ff3333;
+    color: var(--accent-orange);
 }
 
-.status-check-watch {
-    color: #ffff00;
+/* Red can be visually redundant, maybe orange */
+/* Landing View */
+.landing-container {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-dark);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.landing-content {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
+}
+
+.landing-search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.landing-logo {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 50px;
+    letter-spacing: -2px;
+    color: #fff;
+}
+
+.landing-search-wrapper input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 24px 32px;
+    font-size: 1.4rem;
+    border-radius: 999px;
+    color: #fff;
+    text-align: center;
+    font-family: var(--font-main);
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.landing-search-wrapper input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent-green);
+    transform: scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 255, 157, 0.2);
+}
+
+.landing-search-wrapper input::placeholder {
+    color: #666;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 1rem;
+}
+
+/* Animations */
+#dashboardView {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Critical for inner scroll */
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Dashboard Row Layout */
+.dashboard-row {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    min-height: 450px;
+    /* Ensure height for charts */
+}
+
+/* Flex Ratios */
+.chart-section-wrapper {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.volume-section-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cards fill their wrappers */
+.dashboard-row .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure canvas containers fill card */
+.chart-wrapper,
+.volume-chart-wrapper {
+    flex: 1;
+    position: relative;
+    height: auto;
+    /* Let flex handle height */
+    min-height: 0;
+    /* Important for chart.js resize */
+}
+
+/* Overlay Z-Index Fix */
+#loadingOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(13, 13, 13, 0.9);
+    z-index: 3000;
+    /* Top priority */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

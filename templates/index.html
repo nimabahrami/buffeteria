@@ -7,128 +7,137 @@
     <title>BUFFETRIA | Focus</title>
     <!-- Use Inter font for Focus look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
-        <nav class="sidebar">
-            <div class="logo">
-                <span class="logo-icon">🐃</span> Buffetria
-            </div>
 
-            <div class="search-wrapper">
-                <input type="text" id="tickerInput" placeholder="Search..." list="tickerList"
-                    onkeydown="if(event.key==='Enter') runAnalysis()">
-                <datalist id="tickerList">
-                    {% for t in tickers %}
-                    <option value="{{ t }}">
-                        {% endfor %}
-                </datalist>
-            </div>
-
-            <ul class="nav-menu">
-                <li class="active"><span class="icon">🏠</span> Home</li>
-                <li><span class="icon">🌐</span> Browse</li>
-                <li><span class="icon">⚖️</span> Compare</li>
-                <li><span class="icon">📓</span> Watchlist</li>
-            </ul>
-
-            <div class="sidebar-footer">
-                <div class="setting-item">⚙️ Settings</div>
-                <div class="setting-item">💬 Support</div>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header Info -->
-            <header class="stock-header">
-                <div>
-                    <div class="breadcrumbs">Browse > <span id="tickerBreadcrumb">...</span></div>
-                    <h1 id="tickerTitle">Select a Ticker</h1>
-                    <div class="stock-badges">
-                        <span class="badge">Energy</span>
-                        <span class="badge">NYSE</span>
-                    </div>
+        <!-- LANDING VIEW (Initial State) -->
+        <div id="landingView" class="landing-container">
+            <div class="landing-content">
+                <div class="landing-logo">Buffetria</div>
+                <div class="landing-search-wrapper">
+                    <input type="text" id="landingInput" placeholder="SEARCH TICKER..." autocomplete="off"
+                        onkeydown="if(event.key==='Enter') runAnalysis(this.value)">
                 </div>
-                <div class="header-actions">
-                    <button class="btn-primary" onclick="runAnalysis()">Analyze</button>
-                    <button class="btn-secondary">Add to Watchlist</button>
+            </div>
+        </div>
+
+        <!-- DASHBOARD VIEW (Hidden Initially) -->
+        <div id="dashboardView" style="display: none;">
+            <!-- Minimal Header -->
+            <header class="main-header">
+                <div class="logo">Buffetria</div>
+
+                <div class="search-container">
+                    <input type="text" id="tickerInput" placeholder="SEARCH TICKER" autocomplete="off"
+                        onkeydown="if(event.key==='Enter') runAnalysis(this.value)">
+                    <div id="tickerSuggestions" class="suggestions-dropdown"></div>
+                </div>
+
+                <div class="header-right">
+                    <!-- Right actions -->
                 </div>
             </header>
 
-            <!-- Realtime Price -->
-            <div class="price-hero">
-                <div class="price-large" id="currentPrice">$0.00</div>
-                <div class="price-change" id="priceChange">--</div>
-            </div>
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Loading Overlay -->
+                <div id="loadingOverlay" style="display: none;">
+                    <div class="spinner"></div>
+                    <div class="loading-text">ANALYZING MARKET DATA...</div>
+                </div>
 
-            <!-- Tabs -->
-            <div class="tabs">
-                <div class="tab active">Performance</div>
-                <div class="tab">Key Data</div>
-                <div class="tab">Order Flow</div>
-                <div class="tab">Asset Quality</div>
-                <div class="tab">Netback</div>
-            </div>
-
-            <!-- Dashboard Grid -->
-            <div class="dashboard-grid">
-                <!-- Large Chart Card -->
-                <div class="card chart-card">
-                    <div class="card-header">
-                        <div class="time-filters">
-                            <span class="time-filter" onclick="setPeriod('1d')">1D</span> <!-- Placeholder -->
-                            <span class="time-filter active" onclick="setPeriod('2y')">2Y</span>
-                            <span class="time-filter" onclick="setPeriod('max')">MAX</span>
+                <!-- Ticker Info Bar -->
+                <div class="info-bar">
+                    <div class="ticker-ident">
+                        <h1 id="tickerTitle">--</h1>
+                        <div id="priceDisplay" class="price-display">
+                            <span id="currentPrice">--</span>
+                            <span id="priceChange" class="change-pill">--</span>
                         </div>
-                        <select id="maSelect" onchange="updateChartFromCache()" class="ma-select">
-                            <option value="0">No MA</option>
-                            <option value="50">50 Day</option>
-                            <option value="200">200 Day</option>
-                        </select>
                     </div>
-                    <div class="chart-wrapper">
-                        <canvas id="priceChart"></canvas>
+                    <div class="key-metrics" id="marketMetrics">
+                        <!-- Injected via JS -->
                     </div>
                 </div>
 
-                <!-- Order Flow / Volume Profile Card -->
-                <div class="card volume-card">
-                    <h3>Order Flow (Vol Profile)</h3>
-                    <div class="volume-chart-wrapper">
-                        <canvas id="volumeChart"></canvas>
-                    </div>
-                </div>
+                <div class="dashboard-stack">
 
-                <!-- Scorecard / Stats -->
-                <div class="card stats-card">
-                    <h3>Diagnostic Scorecard</h3>
-                    <div class="score-summary">
-                        <div class="gauge-container">
-                            <div class="gauge-fill" id="scoreFill" style="width: 0%"></div>
+                    <!-- Top Row: Chart (2/3) + Volume (1/3) -->
+                    <div class="dashboard-row">
+                        <!-- 1. Price Chart Section -->
+                        <div class="chart-section-wrapper">
+                            <div class="card chart-card">
+                                <div class="chart-controls-row">
+                                    <div class="control-group">
+                                        <span class="control-label">RANGE</span>
+                                        <div class="btn-group" id="timeRangeGroup">
+                                            <button class="btn-toggle" onclick="setPeriod('1y')">1Y</button>
+                                            <button class="btn-toggle active" onclick="setPeriod('2y')">2Y</button>
+                                            <button class="btn-toggle" onclick="setPeriod('5y')">5Y</button>
+                                            <button class="btn-toggle" onclick="setPeriod('max')">MAX</button>
+                                        </div>
+                                    </div>
+                                    <div class="control-group">
+                                        <span class="control-label">MOVING AVG</span>
+                                        <div class="btn-group" id="maGroup">
+                                            <button class="btn-toggle active" onclick="toggleMA(0, this)">NONE</button>
+                                            <button class="btn-toggle" onclick="toggleMA(50, this)">50D</button>
+                                            <button class="btn-toggle" onclick="toggleMA(200, this)">200D</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chart-wrapper">
+                                    <canvas id="priceChart"></canvas>
+                                </div>
+                            </div>
                         </div>
-                        <span id="scoreText">0/18</span>
+
+                        <!-- 2. Order Flow (Rectangular Block - Side) -->
+                        <div class="volume-section-wrapper">
+                            <div class="card volume-card">
+                                <div class="card-header-simple">
+                                    <h3>ORDER FLOW (VOL/PRICE)</h3>
+                                </div>
+                                <div class="volume-chart-wrapper">
+                                    <canvas id="volumeChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="table-wrapper">
-                        <table id="scoreTable">
-                            <thead>
-                                <tr>
-                                    <th>Check</th>
-                                    <th>Value</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+
+                    <!-- 3. Scorecard & Analysis -->
+                    <div class="card stats-card">
+                        <h3>DIAGNOSTIC SCORECARD</h3>
+                        <div class="score-summary">
+                            <div class="gauge-row">
+                                <div class="gauge-container">
+                                    <div class="gauge-fill" id="scoreFill" style="width: 0%"></div>
+                                </div>
+                                <span id="scoreText">0/18</span>
+                            </div>
+
+                            <div class="table-wrapper">
+                                <table id="scoreTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Check</th>
+                                            <th>Value</th>
+                                            <th>Reference</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-        </main>
+            </main>
+        </div>
     </div>
 
     <script src="/static/js/script.js"></script>
