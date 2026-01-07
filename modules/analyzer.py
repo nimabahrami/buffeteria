@@ -17,6 +17,11 @@ class Analyzer:
 
     def analyze_ticker(self, ticker: str) -> Dict[str, Any]:
         """
+        Main entry point. Returns a dictionary with:
+        - summary
+        - scorecard (list of check results)
+        - ledger (json str)
+        """
         # 1. Standardize Ticker
         ticker = ticker.upper()
 
