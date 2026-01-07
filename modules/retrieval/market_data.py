@@ -4,43 +4,86 @@ import pandas as pd
 
 class MarketDataFetcher:
     def __init__(self):
-        pass
-        
+        self.cache_file = "data/market_cache.json"
+
+    def _load_cache(self) -> Dict[str, Any]:
+        import json
+        import os
+        if os.path.exists(self.cache_file):
+            try:
+                with open(self.cache_file, 'r') as f:
+                    return json.load(f)
+            except:
+                pass
+        return {}
+
+    def _save_cache(self, cache: Dict[str, Any]):
+        import json
+        import os
+        try:
+            os.makedirs(os.path.dirname(self.cache_file), exist_ok=True)
+            with open(self.cache_file, 'w') as f:
+                json.dump(cache, f, indent=2)
+        except Exception as e:
+            print(f"Failed to save market cache: {e}")
+
     def get_live_data(self, ticker: str) -> Dict[str, Any]:
         """
-        Fetch real-time metrics that change frequently.
+        Fetch real-time metrics. PRIORITY: CACHE -> LIVE.
+        To avoid Rate Limits on cloud, we use cached data if available.
         """
-        stock = yf.Ticker(ticker)
-        curr_price = None
-        try:
-             curr_price = stock.fast_info.last_price
-        except:
-             pass
-             
-        info = stock.info
-        if not curr_price:
-             curr_price = info.get("currentPrice") or info.get("regularMarketPrice")
+        # 1. Check Cache First
+        full_cache = self._load_cache()
+        if ticker in full_cache:
+            # Check if it has essential data
+            if full_cache[ticker].get("current_price"):
+                return full_cache[ticker]
 
-        data = {
-            "current_price": curr_price,
-            "market_cap": info.get("marketCap"),
-            "trailing_eps": info.get("trailingEps"),
-            "forward_eps": info.get("forwardEps"),
-            "trailing_pe": info.get("trailingPE"),
-            "forward_pe": info.get("forwardPE"),
-            "dividend_rate": info.get("dividendRate"),
-            "dividend_yield": info.get("dividendYield"),
-            "ex_dividend_date": info.get("exDividendDate"),
-            "sector": info.get("sector"),
-            "industry": info.get("industry"),
-            "ebitda": info.get("ebitda"),
-            "total_debt": info.get("totalDebt"),
-            "total_cash": info.get("totalCash"),
-            "operating_cashflow": info.get("operatingCashflow"),
-            "free_cashflow": info.get("freeCashflow"),
-            "shares_outstanding": info.get("sharesOutstanding")
-        }
-        return data
+        # 2. Try Live Fetch (Only if no cache)
+        stock = yf.Ticker(ticker)
+        data = {}
+        
+        try:
+            curr_price = None
+            try:
+                curr_price = stock.fast_info.last_price
+            except:
+                pass
+                
+            info = stock.info
+            if not curr_price:
+                curr_price = info.get("currentPrice") or info.get("regularMarketPrice")
+
+            if curr_price: 
+                data = {
+                    "current_price": curr_price,
+                    "market_cap": info.get("marketCap"),
+                    "trailing_eps": info.get("trailingEps"),
+                    "forward_eps": info.get("forwardEps"),
+                    "trailing_pe": info.get("trailingPE"),
+                    "forward_pe": info.get("forwardPE"),
+                    "dividend_rate": info.get("dividendRate"),
+                    "dividend_yield": info.get("dividendYield"),
+                    "ex_dividend_date": info.get("exDividendDate"),
+                    "sector": info.get("sector"),
+                    "industry": info.get("industry"),
+                    "ebitda": info.get("ebitda"),
+                    "total_debt": info.get("totalDebt"),
+                    "total_cash": info.get("totalCash"),
+                    "operating_cashflow": info.get("operatingCashflow"),
+                    "free_cashflow": info.get("freeCashflow"),
+                    "shares_outstanding": info.get("sharesOutstanding")
+                }
+                
+                # Update Cache
+                full_cache[ticker] = data
+                self._save_cache(full_cache)
+                return data
+
+        except Exception as e:
+            print(f"Live fetch failed for {ticker}: {e}")
+            
+        return {}
 
     def get_price_history(self, ticker: str, period: str = "1y") -> pd.DataFrame:
         stock = yf.Ticker(ticker)
