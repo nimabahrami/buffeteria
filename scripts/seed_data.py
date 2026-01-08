@@ -21,13 +21,12 @@ def seed_all():
         
         try:
             # 1. Fetch/Cache Document
-            # The analyzer's analyze_ticker method triggers document fetching via cache_manager
-            # But we might want to call fetch directly to be sure.
-            
-            # Using analyze_ticker is safer as it exercises the whole pipeline
-            # including live market data fetch.
-            
             result = analyzer.analyze_ticker(ticker)
+            
+            # 2. Force Cache Market Data (Price & Financials)
+            print(f"  > Caching Market Data for {ticker}...")
+            analyzer.market_data_fetcher.get_price_history(ticker)
+            analyzer.market_data_fetcher.get_financial_statements(ticker)
             
             if "error" in result:
                 print(f"  X Error for {ticker}: {result['error']}")
