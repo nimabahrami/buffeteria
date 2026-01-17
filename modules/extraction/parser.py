@@ -27,18 +27,24 @@ class SecHtmlParser:
     def parse(self, file_path: str, doc_id: str) -> ParsedDocument:
         """
         Parses an SEC HTML file into a ParsedDocument.
+        Fast extraction using regex instead of BeautifulSoup.
         """
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, "r", encoding="utf-8", errors='ignore') as f:
             html_content = f.read()
-            
-        soup = BeautifulSoup(html_content, "lxml")
         
-        # Basic text extraction
-        # Separator needs to be handled carefully to avoid merging words across lines
-        full_text = soup.get_text(separator=" ", strip=True) 
-        
-        # TODO: Implement robust section detection (Item 1, Item 7, etc.)
-        # For now, we return the full text.
+        # Fast regex-based HTML tag removal
+        import re
+        # Remove script and style elements
+        text = re.sub(r'<script[^>]*>.*?</script>', ' ', html_content, flags=re.DOTALL | re.IGNORECASE)
+        text = re.sub(r'<style[^>]*>.*?</style>', ' ', text, flags=re.DOTALL | re.IGNORECASE)
+        # Remove HTML tags
+        text = re.sub(r'<[^>]+>', ' ', text)
+        # Decode HTML entities
+        import html
+        text = html.unescape(text)
+        # Normalize whitespace
+        text = re.sub(r'\s+', ' ', text)
+        full_text = text.strip()
         
         parsed_doc = ParsedDocument(
             doc_id=doc_id,

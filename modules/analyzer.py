@@ -75,8 +75,8 @@ class Analyzer:
         
         # Profitability
         results.append(profitability.check_operating_margin_per_boe(parsed_doc, production_boe))
-        results.append(profitability.compute_roic(parsed_doc))
-        results.append(profitability.compute_wacc(parsed_doc, market_data.get("market_cap")))
+        results.append(profitability.compute_roic(financials, market_data))
+        results.append(profitability.compute_wacc(financials, market_data))
         # Need results from ROIC and WACC for Spread
         results.append(profitability.check_roic_minus_wacc_spread(results[-2], results[-1])) # Index -2 is ROIC, -1 is WACC
         

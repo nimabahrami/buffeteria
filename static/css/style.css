@@ -55,7 +55,6 @@ body {
     justify-content: center;
     position: relative;
     max-width: 400px;
-    /* Limit width */
     margin: 0 auto;
 }
 
@@ -76,7 +75,6 @@ body {
 #tickerInput:focus {
     outline: none;
     width: 300px;
-    /* Minimal border bottom active */
     border-bottom: 1px solid var(--accent-green);
 }
 
@@ -97,11 +95,9 @@ body {
     border-radius: 8px;
     margin-top: 8px;
     max-height: 200px;
-    /* Scroll after ~5 items */
     overflow-y: auto;
     display: none;
     z-index: 2000;
-    /* Increased z-index */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
@@ -125,7 +121,82 @@ body {
     border-bottom: none;
 }
 
-/* ... existing code ... */
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+}
+
+/* Info Bar - Ticker and Stats */
+.info-bar {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.ticker-ident {
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+}
+
+.ticker-ident h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.price-display {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+#currentPrice {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent-green);
+}
+
+.change-pill {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* Key Metrics - Horizontal Rounded Rectangles */
+.key-metrics {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.metric-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 12px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 140px;
+}
+
+.metric-label {
+    font-size: 0.7rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.metric-val {
+    font-size: 1.1rem;
+    color: #fff;
+    font-weight: 600;
+}
 
 /* Dashboard Stack */
 .dashboard-stack {
@@ -133,19 +204,14 @@ body {
     flex-direction: column;
     gap: 24px;
     max-width: 1600px;
-    /* Increased from 1200px to fill screen */
     width: 95%;
-    /* Ensure it takes up space */
     margin: 0 auto;
-    padding-bottom: 100px;
-    /* Ensure bottom isn't cut off */
 }
 
 .card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
-    /* Slightly less rounded for sleek look */
     padding: 20px;
 }
 
@@ -153,7 +219,6 @@ body {
 .chart-controls-row {
     display: flex;
     justify-content: flex-end;
-    /* Right aligned */
     gap: 24px;
     margin-bottom: 16px;
     border-bottom: 1px solid #222;
@@ -209,7 +274,7 @@ body {
 }
 
 .volume-chart-wrapper {
-    height: 200px;
+    height: 100%;
     position: relative;
 }
 
@@ -222,19 +287,38 @@ body {
     margin-bottom: 15px;
 }
 
-/* Scorecard */
+/* Scorecard - Make it taller */
+.stats-card {
+    height: 900px;
+    /* 2x the chart height (400px * 2 + padding) */
+}
+
+.stats-card h3 {
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
 .score-summary {
     display: flex;
     flex-direction: column;
-    /* Stack gauge and table vertical or keep horizontal? User said items on left empty? Let's stack them for full width table */
     gap: 20px;
+    height: calc(100% - 40px);
 }
 
 .gauge-row {
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 10px;
+}
+
+#scoreText {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent-green);
+    min-width: 60px;
 }
 
 .gauge-container {
@@ -253,8 +337,7 @@ body {
 
 .table-wrapper {
     width: 100%;
-    max-height: 400px;
-    /* Enable Scroll */
+    flex: 1;
     overflow-y: auto;
     border: 1px solid #222;
     border-radius: 6px;
@@ -279,6 +362,7 @@ th {
     font-weight: 600;
     position: sticky;
     top: 0;
+    z-index: 1;
 }
 
 .status-check-ok {
@@ -289,7 +373,6 @@ th {
     color: var(--accent-orange);
 }
 
-/* Red can be visually redundant, maybe orange */
 /* Landing View */
 .landing-container {
     height: 100vh;
@@ -361,7 +444,6 @@ th {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    /* Critical for inner scroll */
     animation: fadeIn 0.8s ease;
 }
 
@@ -381,7 +463,6 @@ th {
     gap: 24px;
     width: 100%;
     min-height: 450px;
-    /* Ensure height for charts */
 }
 
 /* Flex Ratios */
@@ -410,9 +491,7 @@ th {
     flex: 1;
     position: relative;
     height: auto;
-    /* Let flex handle height */
     min-height: 0;
-    /* Important for chart.js resize */
 }
 
 /* Overlay Z-Index Fix */
@@ -424,9 +503,30 @@ th {
     bottom: 0;
     background: rgba(13, 13, 13, 0.9);
     z-index: 3000;
-    /* Top priority */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #222;
+    border-top-color: var(--accent-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    margin-top: 20px;
+    color: #666;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
 }
