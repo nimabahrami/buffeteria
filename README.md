@@ -1,8 +1,8 @@
-# ANTIGRAVITY TERMINAL // O&G ANALYZER
+# O&G ANALYZER
 
 ## Overview
 
-The Antigravity Terminal is a specialized financial analysis tool designed for the Oil & Gas sector. It combines automated quantitative analysis with a high-fidelity, Bloomberg Terminal-inspired user interface to provide rapid insights into energy equities.
+This is a specialized financial analysis tool designed for the Oil & Gas sector. It combines automated quantitative analysis with a high-fidelity, Bloomberg Terminal-inspired user interface to provide rapid insights into energy equities.
 
 The system leverages Natural Language Processing (NLP) to parse SEC 10-K filings and integrates real-time market data to perform a battery of 18 rigorous financial health checks, covering cost structure, profitability, capital discipline, and valuation.
 
